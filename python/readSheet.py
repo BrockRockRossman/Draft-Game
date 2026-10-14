@@ -7,15 +7,16 @@ class readSheet:
     filePath = ""
     data = []
 
-    def __init__(filePath):
+    def __init__(self, filePath):
         self.filePath = filePath
+        self.data = []
 
-    def getData() :  
-        with open(filePath, newline='') as csvfile:
+    def getData(self) :  
+        with open(self.filePath, newline='') as csvfile:
             filereader = csv.reader(csvfile, delimiter=' ', quotechar='|')
             for row in filereader:
-                rowData = list
+                rowData = list()
                 rowData.append(row)
-                data.append(rowData)
+                self.data.append(rowData)
 
 

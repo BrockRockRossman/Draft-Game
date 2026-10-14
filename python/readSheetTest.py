@@ -1,6 +1,6 @@
 
 import unittest
-from readSheet.py import readSheet
+from readSheet import readSheet
 
 class readSheetTest(unittest.TestCase):
 
@@ -17,9 +17,9 @@ class readSheetTest(unittest.TestCase):
     newSheet = None
 
     def setUp(self):
-        self.newSheet = readSheet(self.filePath)
+        self.newSheet = readSheet('/Users/brockrossman/onedrive/04_college/26-27/Softwater/Draft-Game/files/baseTest.csv')
 
-    def test_(self):
+    def test_Filepath(self):
         self.setUp()
         self.assertEqual(self.newSheet.filePath, self.filePath) # Checks that filepath was set correctly
         
