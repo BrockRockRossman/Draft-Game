@@ -6,7 +6,21 @@ class Team:
         self.roster = []
 
     def to_dict(self):
-        return {"name": self.name, "logo": self.logo, "budget": self.budget}
+        return {"name": self.name, "logo": self.logo, "budget": self.budget,
+                "roster": [p.name for p in self.roster]}
+
+    def add_player(self, player):
+        if player.price > self.budget:
+            raise ValueError("Not enough budget")
+        self.budget -= player.price
+        self.roster.append(player)
+
+
+class Player:
+    def __init__(self, name, id, price):
+        self.name = name
+        self.id = id
+        self.price = price
 
 
 def add_team(all_teams, name, logo, budget):
