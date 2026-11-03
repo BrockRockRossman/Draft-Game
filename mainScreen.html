@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Draft Day</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-logo">🏈</div>
+      <h2>Draft Day</h2>
+    </div>
+
+    <p class="menu-title">Main</p>
+
+    <button class="menu-item active">Dashboard</button>
+    <button class="menu-item">Available Players</button>
+    <button class="menu-item">Teams</button>
+    <button class="menu-item">Draft Board</button>
+
+    <p class="menu-title">Draft</p>
+
+    <button class="menu-item">Trades</button>
+    <button class="menu-item">Results</button>
+
+    <p class="menu-title">Admin</p>
+
+    <button class="menu-item">Settings</button>
+
+  </aside>
+
+
+  <main class="main">
+
+    <div class="topbar">
+
+      <div>
+        <h1>Draft Dashboard</h1>
+        <p>NFL Mock Draft Simulator</p>
+      </div>
+
+      <div class="round-box">
+        Round <span id="roundNumber">1</span> of 10
+      </div>
+
+    </div>
+
+
+    <section class="summary-grid">
+
+      <div class="summary-card">
+        <p>Current Team</p>
+        <h2 id="currentTeam">Team 1</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Current Pick</p>
+        <h2 id="currentPick">#1</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Players Available</p>
+        <h2 id="availableCount">5</h2>
+      </div>
+
+      <div class="summary-card">
+        <p>Team Budget</p>
+        <h2 class="green">$100M</h2>
+      </div>
+
+    </section>
+
+
+    <section class="dashboard-grid">
+
+      <div>
+
+        <section class="panel">
+
+          <div class="panel-header">
+
+            <div>
+              <h2>Available Players</h2>
+              <p>Names remain hidden until selected.</p>
+            </div>
+
+          </div>
+
+
+          <table>
+
+            <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>POS</th>
+              <th>Games</th>
+              <th>Yards</th>
+              <th>TD</th>
+              <th>Rating</th>
+              <th>Cost</th>
+            </tr>
+
+            </thead>
+
+
+            <tbody id="playerTable">
+
+            <tr data-id="101">
+              <td class="player-id">#101</td>
+              <td>QB</td>
+              <td>17</td>
+              <td>4,280</td>
+              <td>35</td>
+              <td>92</td>
+              <td>$15M</td>
+            </tr>
+
+            <tr data-id="102">
+              <td class="player-id">#102</td>
+              <td>QB</td>
+              <td>16</td>
+              <td>3,950</td>
+              <td>29</td>
+              <td>89</td>
+              <td>$13M</td>
+            </tr>
+
+            <tr data-id="103">
+              <td class="player-id">#103</td>
+              <td>WR</td>
+              <td>17</td>
+              <td>1,480</td>
+              <td>13</td>
+              <td>94</td>
+              <td>$14M</td>
+            </tr>
+
+            <tr data-id="104">
+              <td class="player-id">#104</td>
+              <td>RB</td>
+              <td>16</td>
+              <td>1,350</td>
+              <td>12</td>
+              <td>90</td>
+              <td>$12M</td>
+            </tr>
+
+            <tr data-id="105">
+              <td class="player-id">#105</td>
+              <td>TE</td>
+              <td>17</td>
+              <td>920</td>
+              <td>8</td>
+              <td>86</td>
+              <td>$9M</td>
+            </tr>
+
+            </tbody>
+
+          </table>
+
+
+          <div class="draft-form">
+
+            <label for="playerID"></label><input
+                  type="number"
+                  id="playerID"
+                  placeholder="Enter Player ID"
+          >
+
+            <button
+                    id="draftButton"
+                    class="primary-button"
+            >
+              Draft Player
+            </button>
+
+          </div>
+
+
+          <p id="message"></p>
+
+        </section>
+
+
+        <section class="panel">
+
+          <div class="panel-header">
+
+            <h2>Draft Progress</h2>
+
+            <span id="progressText">
+                            0 / 30 Picks
+                        </span>
+
+          </div>
+
+          <div class="progress-background">
+
+            <div
+                    class="progress-bar"
+                    id="progressBar"
+            ></div>
+
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <div>
+
+        <section class="current-pick-card">
+
+          <small>CURRENTLY PICKING</small>
+
+          <h2 id="pickTeam">
+            Team 1
+          </h2>
+
+          <p id="pickInfo">
+            Round 1 • Pick #1
+          </p>
+
+          <div
+                  class="timer"
+                  id="timer"
+          >
+            01:30
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <div class="panel-header">
+            <h2>Teams</h2>
+          </div>
+
+
+          <div class="team-card active">
+
+            <div class="team-title">
+              <strong>Team 1</strong>
+              <span class="budget">$100M</span>
+            </div>
+
+            <div
+                    class="roster"
+                    id="team1Roster"
+            >
+              No players drafted yet.
+            </div>
+
+          </div>
+
+
+          <div class="team-card">
+
+            <div class="team-title">
+              <strong>Team 2</strong>
+              <span class="budget">$100M</span>
+            </div>
+
+            <div
+                    class="roster"
+                    id="team2Roster"
+            >
+              No players drafted yet.
+            </div>
+
+          </div>
+
+
+          <div class="team-card">
+
+            <div class="team-title">
+              <strong>Team 3</strong>
+              <span class="budget">$100M</span>
+            </div>
+
+            <div
+                    class="roster"
+                    id="team3Roster"
+            >
+              No players drafted yet.
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <section class="panel">
+
+          <div class="panel-header">
+            <h2>Draft Controls</h2>
+          </div>
+
+
+          <div class="controls">
+
+            <button
+                    class="control-button"
+                    id="pauseButton"
+            >
+              Pause Timer
+            </button>
+
+            <button
+                    class="control-button"
+                    id="resetButton"
+            >
+              Reset Timer
+            </button>
+
+            <button class="control-button">
+              Undo Pick
+            </button>
+
+            <button class="control-button">
+              Manage Trade
+            </button>
+
+            <button class="control-button">
+              Next Pick
+            </button>
+
+            <button class="control-button end-button">
+              End Draft
+            </button>
+
+          </div>
+
+        </section>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
