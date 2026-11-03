@@ -12,7 +12,7 @@ class readSheet:
         self.data = []
 
     def getData(self) :  
-        with open(self.filePath, newline='') as csvfile:
+        with open(self.filePath, newline='', encoding='utf-8') as csvfile:
             filereader = csv.reader(csvfile, delimiter=' ', quotechar='|')
             for row in filereader:
                 rowData = list()
