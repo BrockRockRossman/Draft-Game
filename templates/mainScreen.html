@@ -21,24 +21,55 @@
       <h2>Draft Day</h2>
     </div>
 
-    <p class="menu-title">Main</p>
+<p class="menu-title">MAIN</p>
 
-    <button class="menu-item active">Dashboard</button>
-    <button class="menu-item">Available Players</button>
-    <button class="menu-item">Teams</button>
-    <button class="menu-item">Draft Board</button>
+<a
+    class="menu-item active"
+    href="{{ url_for('dashboard') }}"
+>
+    Dashboard
+</a>
 
-    <p class="menu-title">Draft</p>
+<a
+    class="menu-item"
+    href="{{ url_for('players_page') }}"
+>
+    Available Players
+</a>
 
-    <button class="menu-item">Trades</button>
-    <button class="menu-item">Results</button>
+<a
+    class="menu-item"
+    href="{{ url_for('teams_page') }}"
+>
+    Teams
+</a>
 
-    <p class="menu-title">Admin</p>
+<a
+    class="menu-item"
+    href="{{ url_for('draft_board') }}"
+>
+    Draft Board
+</a>
 
-    <button class="menu-item">Settings</button>
+
+<p class="menu-title">DRAFT</p>
+
+<a class="menu-item" href="#">
+    Trades
+</a>
+
+<a class="menu-item" href="#">
+    Results
+</a>
+
+
+<p class="menu-title">ADMIN</p>
+
+<a class="menu-item" href="#">
+    Settings
+</a>
 
   </aside>
-
 
   <main class="main">
 
