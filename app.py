@@ -1,68 +1,44 @@
-from flask import Flask, render_template, request, redirect, url_for
-from teams import add_team, check_ready
-from readSheet import readSheet
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
-teams()
+teams = {}
+players = []
+
 
 @app.route("/")
-def home():
-    sheet = readSheet("Files/TestSheet1")
-
-    sheet.getData()
-
-    player_data = sheet.data
-
-    return render_template(
-        "mainScreen.html",
-        "teams = teams",
-        "players = player_data"
-    )
-@app.route("/add-team", methods=["POST"])
-
-def create_teams():
-    name = request.form.get("team_name")
-    logo = request.form.get("logo")
-    budget = request.form.get("budget")
-
-    try:
-        budget = float(budget)
-
-        add_team(
-        teams,
-        name,
-        logo,
-        budget )
-
-    except ValueError as error:
-        return render_template(
-        "mainScreen.html",
-        teams=teams,
-        error=str(error)
-    )
-    return redirect(url_for("home"))
-
-@app.route("/start-draft", methods=["POST"])
-def start_draft():
-
-    try:
-
-        check_ready(teams)
-
-    except ValueError as error:
-
-        return render_template(
-            "mainScreen.html",
-            teams=teams,
-            error=str(error)
-        )
-
+@app.route("/dashboard")
+def dashboard():
     return render_template(
         "mainScreen.html",
         teams=teams,
-        draft_started=True
+        players=players
     )
+
+
+@app.route("/teams")
+def teams_page():
+    return render_template(
+        "teams.html",
+        teams=teams
+    )
+
+
+@app.route("/players")
+def players_page():
+    return render_template(
+        "availablePlayers.html",
+        players=players
+    )
+
+
+@app.route("/draft-board")
+def draft_board():
+    return render_template(
+        "draftBoard.html",
+        teams=teams
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
