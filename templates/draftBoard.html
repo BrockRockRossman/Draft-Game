@@ -1,0 +1,108 @@
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Draft Board</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<section class="panel">
+
+    <div class="panel-header">
+
+        <div>
+            <h2>Draft Board</h2>
+            <p>10 Round Draft</p>
+        </div>
+
+    </div>
+
+
+    <div class="draft-board-wrapper">
+
+        <table class="draft-board">
+
+            <!-- TURN NUMBERS -->
+
+            <thead>
+
+            <tr>
+
+                <th class="round-corner">
+                    Round
+                </th>
+
+                {% for number, team in teams.items() %}
+
+                    <th class="turn-header">
+
+                        Turn {{ number }}
+
+                    </th>
+
+                {% endfor %}
+
+            </tr>
+
+            </thead>
+
+
+            <!-- ROUNDS -->
+
+            <tbody>
+
+            {% for round in range(1, 11) %}
+
+                <tr>
+
+                    <!-- ROUND NUMBER -->
+
+                    <th class="round-header">
+
+                        Round {{ round }}
+
+                    </th>
+
+
+                    <!-- TEAMS -->
+
+                    {% for number, team in teams.items() %}
+
+                        <td class="draft-cell">
+
+                            <div class="draft-team-name">
+
+                                {{ team.name }}
+
+                            </div>
+
+
+                            <div class="draft-player">
+
+                                TBD
+
+                            </div>
+
+                        </td>
+
+                    {% endfor %}
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
