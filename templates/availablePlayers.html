@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Draft Day | Available Players
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-logo">🏈</div>
+            <h2>Draft Day</h2>
+        </div>
+      <p class="menu-title">MAIN</p>
+
+<a
+    class="menu-item active"
+    href="{{ url_for('dashboard') }}"
+>
+    Dashboard
+</a>
+
+<a
+    class="menu-item"
+    href="{{ url_for('players_page') }}"
+>
+    Available Players
+</a>
+
+<a
+    class="menu-item"
+    href="{{ url_for('teams_page') }}"
+>
+    Teams
+</a>
+
+<a
+    class="menu-item"
+    href="{{ url_for('draft_board') }}"
+>
+    Draft Board
+</a>
+
+
+<p class="menu-title">DRAFT</p>
+
+<a class="menu-item" href="#">
+    Trades
+</a>
+
+<a class="menu-item" href="#">
+    Results
+</a>
+
+
+<p class="menu-title">ADMIN</p>
+
+<a class="menu-item" href="#">
+    Settings
+</a>
+
+    </aside>
+
+
+    <main class="main">
+
+
+        <div class="topbar">
+
+
+            <div>
+
+                <h1>
+                    Available Players
+                </h1>
+
+                <p>
+                    Select players using only their ID and statistics.
+                </p>
+
+            </div>
+
+
+            <div class="round-box">
+
+                {{ players|length }}
+                Available
+
+            </div>
+
+
+        </div>
+
+
+        <section class="panel">
+
+
+            <table>
+
+
+                <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Position</th>
+                    <th>Games</th>
+                    <th>Yards</th>
+                    <th>Touchdowns</th>
+                    <th>Rating</th>
+                    <th>Cost</th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                {% for player in players %}
+
+
+                <tr>
+
+                    <td class="player-id">
+                        #{{ player.id }}
+                    </td>
+
+                    <td>
+                        {{ player.position }}
+                    </td>
+
+                    <td>
+                        {{ player.games }}
+                    </td>
+
+                    <td>
+                        {{ player.yards }}
+                    </td>
+
+                    <td>
+                        {{ player.touchdowns }}
+                    </td>
+
+                    <td>
+                        {{ player.rating }}
+                    </td>
+
+                    <td>
+                        ${{ player.cost }}M
+                    </td>
+
+                </tr>
+
+
+                {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+
+            <form
+                action="/draft-player"
+                method="POST"
+                class="draft-form"
+            >
+
+                <input
+                    type="number"
+                    name="player_id"
+                    placeholder="Enter Player ID"
+                    required
+                >
+
+
+                <button
+                    class="primary-button"
+                    type="submit"
+                >
+                    Draft Player
+                </button>
+
+            </form>
+
+
+            {% if error %}
+
+            <p class="error-message">
+                {{ error }}
+            </p>
+
+            {% endif %}
+
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
