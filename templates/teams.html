@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Draft Day | Teams</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="app">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-logo">🏈</div>
+            <h2>Draft Day</h2>
+        </div>
+
+      <p class="menu-title">MAIN</p>
+
+<a
+    class="menu-item active"
+    href="{{ url_for('dashboard') }}"
+>
+    Dashboard
+</a>
+
+<a
+    class="menu-item"
+    href="{{ url_for('players_page') }}"
+>
+    Available Players
+</a>
+
+<a
+    class="menu-item"
+    href="{{ url_for('teams_page') }}"
+>
+    Teams
+</a>
+
+<a
+    class="menu-item"
+    href="{{ url_for('draft_board') }}"
+>
+    Draft Board
+</a>
+
+
+<p class="menu-title">DRAFT</p>
+
+<a class="menu-item" href="#">
+    Trades
+</a>
+
+<a class="menu-item" href="#">
+    Results
+</a>
+
+
+<p class="menu-title">ADMIN</p>
+
+<a class="menu-item" href="#">
+    Settings
+</a>
+
+    </aside>
+
+
+    <main class="main">
+
+
+        <div class="topbar">
+
+            <div>
+
+                <h1>Teams</h1>
+
+                <p>
+                    Rosters, budgets and current draft information.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <section class="teams-page-grid">
+
+
+            {% for number, team in teams.items() %}
+
+
+            <div class="team-page-card">
+
+
+                <div class="team-title">
+
+                    <h2>
+                        {{ team.name }}
+                    </h2>
+
+                    <span class="budget">
+                        ${{ team.budget }}M
+                    </span>
+
+                </div>
+
+
+                {% if team.logo %}
+
+                <img
+                    class="team-logo"
+                    src="{{ team.logo }}"
+                    alt="{{ team.name }} logo"
+                >
+
+                {% endif %}
+
+
+                <h3>
+                    Roster
+                </h3>
+
+
+                <div class="roster">
+
+
+                    {% if team.roster %}
+
+
+                        {% for player in team.roster %}
+
+                        <div class="roster-player">
+
+                            <strong>
+                                {{ player.name }}
+                            </strong>
+
+                            <span>
+                                {{ player.position }}
+                            </span>
+
+                        </div>
+
+                        {% endfor %}
+
+
+                    {% else %}
+
+                        <p>
+                            No players drafted yet.
+                        </p>
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
