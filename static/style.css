@@ -66,6 +66,7 @@ body {
     color: #aeb8cc;
 
     text-align: left;
+    text-decoration: none;
 
     padding: 18px 22px;
     margin-bottom: 12px;
@@ -476,4 +477,147 @@ tbody tr:hover {
     .draft-form {
         flex-direction: column;
     }
+    /* ---------------- DRAFT BOARD ---------------- */
+    .draft-board-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+    .draft-board {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 8px;
+        margin-top: 15px;
+    }
+
+    .draft-board th,
+
+    .draft-board td {
+        border: none;
+    }
+
+    .round-corner {
+        background-color: transparent;
+
+        color: #65708a;
+
+        text-align: center;
+
+        min-width: 110px;
+    }
+    .turn-header {
+        background-color: #101a31;
+
+        color: #52d8ff;
+
+        padding: 15px;
+
+        text-align: center;
+
+        border-radius: 8px;
+
+        min-width: 150px;
+    }
+
+    .round-header {
+        background-color: #101a31;
+
+        color: #b865ff;
+
+        padding: 18px;
+
+        text-align: center;
+
+        border-radius: 8px;
+
+        min-width: 110px;
+    }
+
+    .draft-cell {
+        background-color: #0e1930;
+
+        border: 1px solid #182844 !important;
+
+        border-radius: 10px;
+
+        padding: 16px;
+
+        text-align: center;
+
+        min-width: 150px;
+
+        height: 95px;
+    }
+    .draft-cell:hover {
+        border-color: #8d3fff !important;
+
+        background-color: #111f3b;
+    }
+    .draft-team-name {
+        font-weight: bold;
+
+        color: #f8fafc;
+
+        margin-bottom: 10px;
+    }
+    .draft-player {
+        font-size: 13px;
+
+        color: #66738d;
+    }
+    /* WELCOME PAGE */
+
+.welcome-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.welcome-card {
+    background: linear-gradient(
+        145deg,
+        #0d1830,
+        #0a1328
+    );
+
+    border: 1px solid #172642;
+
+    border-radius: 14px;
+
+    padding: 30px;
+
+    text-decoration: none;
+
+    color: white;
+
+    transition: 0.2s;
+}
+
+.welcome-card:hover {
+    border-color: #8d3fff;
+
+    transform: translateY(-3px);
+
+    background: linear-gradient(
+        145deg,
+        #111f3d,
+        #0c1730
+    );
+}
+
+.welcome-card h2 {
+    color: #b865ff;
+    margin-bottom: 10px;
+}
+
+.welcome-card p {
+    color: #8491a9;
+    line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+
+    .welcome-grid {
+        grid-template-columns: 1fr;
+    }
+}
 }
