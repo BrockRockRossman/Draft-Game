@@ -1,11 +1,70 @@
-from flask import Flask, render_template, request, redirect, url_for
-from python.teams import add_team, check_ready
+# Header: This is the code for the flask for the webapplication. This integrates the functionality of our code with the
+# html code
+
+
+from flask import Flask, render_template, request, redirect, url_for, session
 from python.readSheet import readSheet
+from python.teams import Team, Player
+from python.Draft import Draft
+
 
 # Variable and class setup
 app = Flask(__name__)
-teams()
 
+# Setup Variables
+sheet = readSheet
+
+mainDraft = Draft
+
+budget = 0
+players = []
+teams = []
+
+# I tried to organize the routes in the order that one might see them in, starting with the setup page submit
+
+
+
+# ---------------------------- SETUP ----------------------------
+
+
+
+# setup page submit button
+@app.route("/setup", methods=["POST"])
+def setup_Game():
+    # Setup retrieval
+    file = request.form.get("player_data") # retrieves file
+    budget = request.form.get("budget_num") # Functionality for getting the budget
+    session['budget'] = budget
+
+
+    sheet = readSheet(file)
+
+
+    return redirect(url_for("setup2.html")) # After uploading redirect to team setup page
+
+# Functionality for button to create a new team
+@app.route("/add-team", methods=["POST"])
+def create_teams():
+
+    name = request.form.get("team_name") # Gets the team name
+    logo = request.form.get("logo") # Gets the uploaded logo
+    budget = session.get('budget')
+    new_team = Team(name, logo, budget) # Creates a team object with the parameters
+    teams.append(new_team) # Adds the team to the teams list
+
+    return render_template("setup.html", teams = teams) # Renders the setup page again with the updated teams list
+    # In html, get the teams list in order to display the teams already made
+
+@app.route("/fin-team", methods=["POST"])
+def submit_teams():
+
+        mainDraft = Draft(teams, players, 10) # !!! currently not referencing the mainDraft outside of the method, needs fixing
+
+        return redirect("mainScreen.html")
+
+
+
+# ---------------------------- Home Page ----------------------------
 
 
 
@@ -20,69 +79,30 @@ def home():
 
     return render_template(
         "mainScreen.html",
-        "teams = teams",
-        "players = player_data"
-    )
-
-# Game Setup
-@app.route("/setup", methods=["POST"])
-def setup_Game():
-    # Functionality for uploading a csv file
-    file = request.form.get("player_data") # retrieves file
-    sheet = readSheet() # Reads the sheet and stores it in a local variable
-
-    # Functionality for getting the budget
-    budget = request.form.get("budget_num")
-
-    return redirect(url_for("")) # After uploading redirect to team creation
+        teams = teams, players = player_data)
 
 
-# Functionality for creating teams
-@app.route("/add-team", methods=["POST"])
-def create_teams():
-    name = request.form.get("team_name") # Gets the team name # Gets the team name
 
-    logo = request.form.get("logo")
-    budget = request.form.get("budget")
+# ---------------------------- Draft Page ----------------------------
 
-    try:
-        budget = float(budget)
+# Drafting code
+@app.route("/draft", methods=["POST"])
+def draft_pick():
+    player_num = request.form.get("player_num") # Retrieves the player number entered for the draft
 
-        add_team(
-            teams,
-            name,
-            logo,
-            budget )
+    cur_team = mainDraft.current_team() # Retrieves which team is currently drafting
 
-    except ValueError as error:
-        return render_template(
-            "mainScreen.html",
-            teams=teams,
-            error=str(error)
-        )
-    return redirect(url_for("home"))
+# Functiuonality for the undo button
+@app.route("/undo", methods=["POST"])
+def undo():
+    mainDraft.undo_pick() # Undoes the pick
 
-# Drafting functionality
-@app.route("/start-draft", methods=["POST"])
-def start_draft():
+    cur_team = mainDraft.current_team() # Retrieves the current team
 
-    try:
+    render_template() # Re renders html with updated current team information
 
-        check_ready(teams)
 
-    except ValueError as error:
 
-        return render_template(
-            "mainScreen.html",
-            teams=teams,
-            error=str(error)
-        )
-
-    return render_template(
-        "mainScreen.html",
-        teams=teams,
-        draft_started=True
-    )
 
 
 
