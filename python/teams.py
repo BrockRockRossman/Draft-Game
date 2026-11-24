@@ -1,28 +1,25 @@
+BUDGET_CAP = 1000  # number: the most money a team can ever have
+
+
+# class (blueprint) for one team. every Team(...) made from it is an object
 class Team:
     def __init__(self, name, logo, budget):
-        self.name = name
-        self.logo = logo
-        self.budget = budget
-        self.roster = []
-
-    def to_dict(self):
-        return {"name": self.name, "logo": self.logo, "budget": self.budget}
+        self.name = name      # text
+        self.logo = logo      # text
+        self.budget = budget  # number
+        self.roster = []      # list of Player objects this team has picked
 
 
-def add_team(all_teams, name, logo, budget):
-    if len(all_teams) >= 5:
-        raise ValueError("You can't have more than 5 teams")
-    for t in all_teams.values():
-        if t.name.lower() == name.lower():
-            raise ValueError("That team name is already used")
-    if budget <= 0:
-        raise ValueError("Budget must be above 0")
-
-    number = len(all_teams) + 1
-    all_teams[number] = Team(name, logo, budget)
-    return all_teams[number]
+# class (blueprint) for one player. every Player(...) made from it is an object
+class Player:
+    def __init__(self, name, number, price):
+        self.name = name      # text
+        self.number = number  # number, used to pick them
+        self.price = price    # number
+        self.team = None      # the Team object that picked them (None = not picked yet)
 
 
-def check_ready(all_teams):
-    if len(all_teams) < 3:
-        raise ValueError("You need at least 3 teams to start")
+
+
+
+
