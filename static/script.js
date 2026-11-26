@@ -1,264 +1,22 @@
-const players = {
-    101: {
-        name: "Josh Allen",
-        position: "QB"
-    },
+// ======================================================
+// SHARED DRAFT TIMER
+// Used by mainScreen.html and draftBoard.html
+// ======================================================
 
-    102: {
-        name: "Lamar Jackson",
-        position: "QB"
-    },
+const TIMER_LENGTH = 90;
 
-    103: {
-        name: "Justin Jefferson",
-        position: "WR"
-    },
 
-    104: {
-        name: "Saquon Barkley",
-        position: "RB"
-    },
-
-    105: {
-        name: "Travis Kelce",
-        position: "TE"
-    }
-};
-
-
-let currentTeam = 1;
-let currentPick = 1;
-let round = 1;
-
-let draftedPlayers = [];
-
-let timeRemaining = 90;
-let timerRunning = true;
-
-
-const draftButton =
-    document.getElementById("draftButton");
-
-const playerInput =
-    document.getElementById("playerID");
-
-const message =
-    document.getElementById("message");
-
-const availableCount =
-    document.getElementById("availableCount");
-
-const currentTeamDisplay =
-    document.getElementById("currentTeam");
-
-const currentPickDisplay =
-    document.getElementById("currentPick");
-
-const pickTeam =
-    document.getElementById("pickTeam");
-
-const pickInfo =
-    document.getElementById("pickInfo");
-
-const roundNumber =
-    document.getElementById("roundNumber");
-
-const progressBar =
-    document.getElementById("progressBar");
-
-const progressText =
-    document.getElementById("progressText");
-
-
-draftButton.addEventListener(
-    "click",
-    draftPlayer
-);
-
-
-function draftPlayer() {
-
-    const selectedID =
-        Number(playerInput.value);
-
-
-    if (!players[selectedID]) {
-
-        message.textContent =
-            "Player ID does not exist.";
-
-        return;
-    }
-
-
-    if (draftedPlayers.includes(selectedID)) {
-
-        message.textContent =
-            "That player has already been drafted.";
-
-        return;
-    }
-
-
-    const selectedPlayer =
-        players[selectedID];
-
-
-    draftedPlayers.push(selectedID);
-
-
-    message.textContent =
-        "Player Revealed: "
-        + selectedPlayer.name
-        + " — "
-        + selectedPlayer.position;
-
-
-    addToRoster(
-        currentTeam,
-        selectedPlayer
-    );
-
-
-    removePlayerRow(selectedID);
-
-
-    moveToNextPick();
-
-
-    playerInput.value = "";
-}
-
-
-function addToRoster(team, player) {
-
-    const roster =
-        document.getElementById(
-            "team" + team + "Roster"
-        );
-
-
-    if (
-        roster.textContent.includes(
-            "No players drafted"
-        )
-    ) {
-
-        roster.textContent = "";
-    }
-
-
-    const playerLine =
-        document.createElement("div");
-
-
-    playerLine.textContent =
-        player.name
-        + " — "
-        + player.position;
-
-
-    roster.appendChild(playerLine);
-}
-
-
-function removePlayerRow(playerID) {
-
-    const row =
-        document.querySelector(
-            'tr[data-id="'
-            + playerID
-            + '"]'
-        );
-
-
-    if (row) {
-        row.remove();
-    }
-
-
-    availableCount.textContent =
-        Object.keys(players).length
-        - draftedPlayers.length;
-}
-
-
-function moveToNextPick() {
-
-    currentPick++;
-
-
-    currentTeam++;
-
-
-    if (currentTeam > 3) {
-
-        currentTeam = 1;
-
-        round++;
-    }
-
-
-    currentTeamDisplay.textContent =
-        "Team " + currentTeam;
-
-
-    currentPickDisplay.textContent =
-        "#" + currentPick;
-
-
-    pickTeam.textContent =
-        "Team " + currentTeam;
-
-
-    pickInfo.textContent =
-        "Round "
-        + round
-        + " • Pick #"
-        + currentPick;
-
-
-    roundNumber.textContent =
-        round;
-
-
-    updateProgress();
-
-
-    resetTimer();
-}
-
-
-function updateProgress() {
-
-    const completed =
-        draftedPlayers.length;
-
-
-    const total = 30;
-
-
-    progressText.textContent =
-        completed
-        + " / "
-        + total
-        + " Picks";
-
-
-    const percentage =
-        (completed / total) * 100;
-
-
-    progressBar.style.width =
-        percentage + "%";
-}
-
-
-/* TIMER */
-
-const timerDisplay =
+// Dashboard timer
+const dashboardTimer =
     document.getElementById("timer");
 
+
+// Draft board timer
+const boardTimer =
+    document.getElementById("draftBoardTimer");
+
+
+// Dashboard control buttons
 const pauseButton =
     document.getElementById("pauseButton");
 
@@ -266,78 +24,415 @@ const resetButton =
     document.getElementById("resetButton");
 
 
-setInterval(function () {
+// ------------------------------------------------------
+// Initialize timer storage
+// ------------------------------------------------------
 
-    if (
-        timerRunning
-        &&
-        timeRemaining > 0
-    ) {
+if (localStorage.getItem("draftTimerRemaining") === null) {
 
-        timeRemaining--;
+    localStorage.setItem(
+        "draftTimerRemaining",
+        TIMER_LENGTH
+    );
 
-        updateTimerDisplay();
+    localStorage.setItem(
+        "draftTimerRunning",
+        "true"
+    );
+
+    localStorage.setItem(
+        "draftTimerEnd",
+        Date.now() + TIMER_LENGTH * 1000
+    );
+}
+
+
+// ------------------------------------------------------
+// GET REMAINING TIME
+// ------------------------------------------------------
+
+function getRemainingTime() {
+
+    const running =
+        localStorage.getItem("draftTimerRunning") === "true";
+
+    if (!running) {
+
+        return Number(
+            localStorage.getItem("draftTimerRemaining")
+        );
     }
 
-}, 1000);
 
-
-function updateTimerDisplay() {
-
-    const minutes =
-        Math.floor(
-            timeRemaining / 60
+    const endTime =
+        Number(
+            localStorage.getItem("draftTimerEnd")
         );
 
 
-    const seconds =
-        timeRemaining % 60;
+    const remaining =
+        Math.ceil(
+            (endTime - Date.now()) / 1000
+        );
 
 
-    timerDisplay.textContent =
-        String(minutes).padStart(2, "0")
-        + ":"
-        + String(seconds).padStart(2, "0");
+    return Math.max(0, remaining);
 }
 
 
-pauseButton.addEventListener(
-    "click",
-    function () {
+// ------------------------------------------------------
+// SAVE REMAINING TIME
+// ------------------------------------------------------
 
-        timerRunning =
-            !timerRunning;
+function saveRemainingTime(seconds) {
+
+    localStorage.setItem(
+        "draftTimerRemaining",
+        seconds
+    );
+}
 
 
-        if (timerRunning) {
+// ------------------------------------------------------
+// DISPLAY TIMER
+// ------------------------------------------------------
 
-            pauseButton.textContent =
-                "Pause Timer";
+function displayTimer() {
 
-        } else {
+    const remaining =
+        getRemainingTime();
 
-            pauseButton.textContent =
-                "Resume Timer";
-        }
 
+    const minutes =
+        Math.floor(remaining / 60);
+
+
+    const seconds =
+        remaining % 60;
+
+
+    const formatted =
+        String(minutes).padStart(2, "0")
+        +
+        ":"
+        +
+        String(seconds).padStart(2, "0");
+
+
+    // Dashboard
+    if (dashboardTimer) {
+        dashboardTimer.textContent = formatted;
     }
-);
 
 
-resetButton.addEventListener(
-    "click",
-    resetTimer
-);
+    // Draft board
+    if (boardTimer) {
+        boardTimer.textContent = formatted;
+    }
 
+
+    saveRemainingTime(remaining);
+
+
+    // Stop timer at zero
+    if (remaining <= 0) {
+
+        localStorage.setItem(
+            "draftTimerRunning",
+            "false"
+        );
+
+        updatePauseButton();
+    }
+}
+
+
+// ------------------------------------------------------
+// UPDATE PAUSE BUTTON
+// ------------------------------------------------------
+
+function updatePauseButton() {
+
+    if (!pauseButton) {
+        return;
+    }
+
+
+    const running =
+        localStorage.getItem("draftTimerRunning") === "true";
+
+
+    pauseButton.textContent =
+        running
+            ? "Pause Timer"
+            : "Resume Timer";
+}
+
+
+// ------------------------------------------------------
+// RESET TIMER
+// ------------------------------------------------------
 
 function resetTimer() {
 
-    timeRemaining = 90;
+    localStorage.setItem(
+        "draftTimerRemaining",
+        TIMER_LENGTH
+    );
 
-    timerRunning = true;
+    localStorage.setItem(
+        "draftTimerRunning",
+        "true"
+    );
 
-    pauseButton.textContent =
-        "Pause Timer";
+    localStorage.setItem(
+        "draftTimerEnd",
+        Date.now() + TIMER_LENGTH * 1000
+    );
 
-    updateTimerDisplay();
+
+    displayTimer();
+
+    updatePauseButton();
 }
+
+
+// ------------------------------------------------------
+// PAUSE / RESUME TIMER
+// ------------------------------------------------------
+
+function toggleTimer() {
+
+    const running =
+        localStorage.getItem("draftTimerRunning") === "true";
+
+
+    // PAUSE
+    if (running) {
+
+        const remaining =
+            getRemainingTime();
+
+
+        localStorage.setItem(
+            "draftTimerRemaining",
+            remaining
+        );
+
+
+        localStorage.setItem(
+            "draftTimerRunning",
+            "false"
+        );
+    }
+
+
+    // RESUME
+    else {
+
+        let remaining =
+            Number(
+                localStorage.getItem(
+                    "draftTimerRemaining"
+                )
+            );
+
+
+        // If timer reached zero,
+        // restart at 90 seconds
+        if (remaining <= 0) {
+            remaining = TIMER_LENGTH;
+        }
+
+
+        localStorage.setItem(
+            "draftTimerRunning",
+            "true"
+        );
+
+
+        localStorage.setItem(
+            "draftTimerEnd",
+            Date.now() + remaining * 1000
+        );
+    }
+
+
+    displayTimer();
+
+    updatePauseButton();
+}
+
+
+// ------------------------------------------------------
+// BUTTON EVENTS
+// ------------------------------------------------------
+
+if (pauseButton) {
+
+    pauseButton.addEventListener(
+        "click",
+        toggleTimer
+    );
+}
+
+
+if (resetButton) {
+
+    resetButton.addEventListener(
+        "click",
+        resetTimer
+    );
+}
+
+
+// ------------------------------------------------------
+// AUTOMATIC RESET AFTER SUCCESSFUL PICK
+//
+// Flask redirects to:
+// /dashboard?reset_timer=1
+// ------------------------------------------------------
+
+const urlParams =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+if (urlParams.get("reset_timer") === "1") {
+
+    resetTimer();
+
+
+    // Remove reset_timer so refreshing the page
+    // does not reset the timer again.
+    urlParams.delete("reset_timer");
+
+
+    const cleanUrl =
+        window.location.pathname
+        +
+        (
+            urlParams.toString()
+                ? "?" + urlParams.toString()
+                : ""
+        );
+
+
+    window.history.replaceState(
+        {},
+        "",
+        cleanUrl
+    );
+}
+
+
+// ------------------------------------------------------
+// INITIAL DISPLAY
+// ------------------------------------------------------
+
+displayTimer();
+
+updatePauseButton();
+
+
+// ------------------------------------------------------
+// UPDATE SCREEN EVERY 250ms
+// ------------------------------------------------------
+
+setInterval(
+    displayTimer,
+    250
+);
+
+
+// ------------------------------------------------------
+// SYNC IF ANOTHER TAB CHANGES TIMER
+// ------------------------------------------------------
+
+window.addEventListener(
+    "storage",
+    () => {
+
+        displayTimer();
+
+        updatePauseButton();
+    }
+);
+// ======================================================
+// WELCOME PAGE - CSV FILE NAME DISPLAY
+//
+// HTML connections:
+// id="player_data" -> CSV file input
+// id="fileLabel"   -> text shown inside Choose CSV button
+//
+// This only displays the selected file name.
+// Flask/app.py handles the actual upload and readSheet.py
+// handles reading the CSV.
+// ======================================================
+
+const fileInput =
+    document.getElementById("player_data");
+
+const fileLabel =
+    document.getElementById("fileLabel");
+
+
+if (fileInput && fileLabel) {
+
+    fileInput.addEventListener(
+        "change",
+        () => {
+
+            fileLabel.textContent =
+                fileInput.files.length
+                    ? fileInput.files[0].name
+                    : "CHOOSE CSV";
+        }
+    );
+}
+// ======================================================
+// DRAFT PROGRESS BAR
+//
+// HTML connection:
+// id="progressBar" in mainScreen.html
+//
+// Flask sends picks_done and total_picks into the HTML
+// using data-* attributes.
+//
+// JavaScript reads those values and calculates the
+// percentage width of the progress bar.
+// ======================================================
+
+const progressBar =
+    document.getElementById("progressBar");
+
+
+if (progressBar) {
+
+    const picksDone =
+        Number(
+            progressBar.dataset.picksDone || 0
+        );
+
+
+    const totalPicks =
+        Number(
+            progressBar.dataset.totalPicks || 0
+        );
+
+
+    let progressPercent = 0;
+
+
+    if (totalPicks > 0) {
+
+        progressPercent =
+            (picksDone / totalPicks) * 100;
+    }
+
+
+    progressBar.style.width =
+        progressPercent + "%";
+}
+
