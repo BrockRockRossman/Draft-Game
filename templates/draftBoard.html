@@ -1,108 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Draft Board</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draft Day | Draft Board</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
+       href="https://fonts.googleapis.com/css2?family=Bungee&family=Rajdhani:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet"
     >
 </head>
-
-<section class="panel">
-
-    <div class="panel-header">
-
-        <div>
-            <h2>Draft Board</h2>
-            <p>10 Round Draft</p>
+<!--
+  FLASK CONNECTION:
+  app.py -> draft_board() renders this template.
+  board_rows is created in app.py from the Draft object's turn_order and picks.
+  current_team/current_pick/round_number come from get_draft_state().
+-->
+<body data-picks-done="{{ picks_done }}">
+<div class="app">
+    <aside class="sidebar">
+        <div class="brand">
+              <div class="setup-brand-mark">
+              <img
+                      src="{{ url_for('static', filename='brandLogo.png') }}"
+                      alt="Draft Day Logo"
+              >
+          </div>
+            <h2 class="draftday-brand">DRAFT DAY</h2>
         </div>
 
-    </div>
+        <p class="menu-title">MAIN</p>
+        <a class="menu-item" href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a class="menu-item" href="{{ url_for('players_page') }}">Available Players</a>
+        <a class="menu-item" href="{{ url_for('teams_page') }}">Teams</a>
+        <a class="menu-item active" href="{{ url_for('draft_board') }}">Draft Board</a>
+    </aside>
 
+    <main class="main draft-board-page">
+        <div class="draft-board-topbar">
+            <div>
+                <h1>Draft board</h1>
+                <p>Check the turns and picks of all teams</p>
+            </div>
 
-    <div class="draft-board-wrapper">
+            <div class="board-timer-card">
+                <span>TIME REMAINING</span>
+                <div id="draftBoardTimer">01:30</div>
+                {% if current_team %}
+                    <small>{{ current_team.name }} is on the clock</small>
+                {% else %}
+                    <small>Create teams to begin</small>
+                {% endif %}
+            </div>
+        </div>
 
-        <table class="draft-board">
+        {% if teams %}
+            <section class="draft-board-panel">
+                <div class="draft-board-wrapper">
+                    <table class="snake-draft-board">
+                        <thead>
+                            <tr>
+                                <th class="round-label-cell">ROUND</th>
+                                {% for turn in range(1, teams|length + 1) %}
+                                    <th class="turn-header-cell">TURN {{ turn }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in board_rows %}
+                                <tr>
+                                    <th class="round-number-cell">Round {{ row.round_number }}</th>
+                                    {% for cell in row.cells %}
+                                        <td class="snake-pick-cell {% if cell.active %}active-pick-cell{% endif %}">
+                                            <div class="pick-team-name">{{ cell.team.name }}</div>
+                                            {% if cell.player %}
+                                                <div class="pick-player-name">{{ cell.player.name }}</div>
+                                            {% elif cell.active %}
+                                                <div class="on-clock-label">ON THE CLOCK</div>
+                                            {% else %}
+                                                <div class="pick-pending">—</div>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-            <!-- TURN NUMBERS -->
-
-            <thead>
-
-            <tr>
-
-                <th class="round-corner">
-                    Round
-                </th>
-
-                {% for number, team in teams.items() %}
-
-                    <th class="turn-header">
-
-                        Turn {{ number }}
-
-                    </th>
-
-                {% endfor %}
-
-            </tr>
-
-            </thead>
-
-
-            <!-- ROUNDS -->
-
-            <tbody>
-
-            {% for round in range(1, 11) %}
-
-                <tr>
-
-                    <!-- ROUND NUMBER -->
-
-                    <th class="round-header">
-
-                        Round {{ round }}
-
-                    </th>
-
-
-                    <!-- TEAMS -->
-
-                    {% for number, team in teams.items() %}
-
-                        <td class="draft-cell">
-
-                            <div class="draft-team-name">
-
-                                {{ team.name }}
-
-                            </div>
-
-
-                            <div class="draft-player">
-
-                                TBD
-
-                            </div>
-
-                        </td>
-
-                    {% endfor %}
-
-                </tr>
-
-            {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</section>
+            <div class="board-bottom-actions">
+                <a class="control-button board-link" href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+            </div>
+        {% else %}
+            <section class="panel">
+                <p>No teams have been created yet.</p>
+                <a class="primary-button board-link" href="{{ url_for('create_teams_page') }}">Create Teams</a>
+            </section>
+        {% endif %}
+    </main>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</div>
+</body>
+</html>
