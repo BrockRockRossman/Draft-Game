@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draft Day | Create Teams</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link
+       href="https://fonts.googleapis.com/css2?family=Bungee&family=Rajdhani:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet"
+    >
+</head>
+<body class="setup-body">
+<main class="setup-shell teams-setup-shell">
+    <header class="setup-header create-teams-header">
+          <div class="setup-brand-mark">
+              <img
+                      src="{{ url_for('static', filename='brandLogo.png') }}"
+                      alt="Draft Day Logo"
+              >
+          </div>
+        <div>
+            <h1 class="create-teams-title">
+                DRAFT DAY: NFL GAME<br>
+                SIMULATOR </h1>
+            <p class="setup-subtitle">Create up to five teams with fun original names, logos and budgets!</p>
+        </div>
+        <a class="create-teams-back" href="{{ url_for('welcome') }}"> Back → </a>
+    </header>
+
+    <section class="team-setup-layout">
+        <div class="team-form-panel">
+            <h2>Create teams <span>(max 5)</span></h2>
+            <p class="team-count">{{ teams|length }} / 5 teams created</p>
+
+            {% if error %}
+                <div class="setup-message error">{{ error }}</div>
+            {% endif %}
+
+            <form action="{{ url_for('create_team') }}" method="POST" class="team-create-form">
+                <label>
+                    <span>Name</span>
+                    <input name="team_name" type="text" placeholder="Team name" required>
+                </label>
+
+                <label>
+                    <span>Budget</span>
+                    <input name="budget" type="number" min="1" max="1000" step="1" placeholder="100" required>
+                </label>
+
+                <label class="full-field">
+                    <span>Logo</span>
+                    <input name="logo" type="text" placeholder="Optional logo URL">
+                </label>
+
+                <button class="setup-gradient-button full-field" type="submit" {% if teams|length >= 5 %}disabled{% endif %}>
+                    Submit Team
+                </button>
+            </form>
+        </div>
+
+        <div class="created-teams-panel">
+            <h2>Created Teams</h2>
+            <div class="created-team-list">
+                {% for team in teams %}
+                    <div class="created-team-row">
+                        <div class="created-team-index">{{ loop.index }}</div>
+                        <div>
+                            <strong>{{ team.name }}</strong>
+                            <span>Budget: ${{ '%.0f'|format(team.budget) }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="empty-setup-state">No teams created yet.</p>
+                {% endfor %}
+            </div>
+
+            <form action="{{ url_for('start_draft') }}" method="POST" class="play-form">
+                <button class="setup-gradient-button play-button" type="submit" {% if teams|length < 3 %}disabled{% endif %}>
+                    Press to play!
+                </button>
+                {% if teams|length < 3 %}
+                    <small>Create at least 3 teams to start.</small>
+                {% endif %}
+            </form>
+        </div>
+    </section>
+</main>
+</body>
+</html>
