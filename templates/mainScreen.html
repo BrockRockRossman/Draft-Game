@@ -1,393 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Draft Day</title>
-
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link
+       href="https://fonts.googleapis.com/css2?family=Bungee&family=Rajdhani:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet"
+  >
 </head>
-
-<body>
-
+<!--
+  FLASK CONNECTION:
+  app.py -> dashboard() renders this page.
+  Important Jinja values: teams, players, current_team, current_pick,
+  round_number, picks_done, total_picks, revealed, and error.
+-->
+<body data-picks-done="{{ picks_done }}">
 <div class="app">
-
   <aside class="sidebar">
-
     <div class="brand">
-      <div class="brand-logo">🏈</div>
-      <h2>Draft Day</h2>
+        <div class="setup-brand-mark">
+              <img
+                      src="{{ url_for('static', filename='brandLogo.png') }}"
+                      alt="Draft Day Logo"
+              >
+          </div>
+      <h2 class="draftday-brand">DRAFT DAY</h2>
     </div>
 
-<p class="menu-title">MAIN</p>
+    <p class="menu-title">MAIN</p>
+    <a class="menu-item active" href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a class="menu-item" href="{{ url_for('players_page') }}">Available Players</a>
+    <a class="menu-item" href="{{ url_for('teams_page') }}">Teams</a>
+    <a class="menu-item" href="{{ url_for('draft_board') }}">Draft Board</a>
 
-<a
-    class="menu-item active"
-    href="{{ url_for('dashboard') }}"
->
-    Dashboard
-</a>
+    <p class="menu-title">DRAFT</p>
+    <a class="menu-item" href="#">Trades</a>
+    <a class="menu-item" href="#">Results</a>
 
-<a
-    class="menu-item"
-    href="{{ url_for('players_page') }}"
->
-    Available Players
-</a>
-
-<a
-    class="menu-item"
-    href="{{ url_for('teams_page') }}"
->
-    Teams
-</a>
-
-<a
-    class="menu-item"
-    href="{{ url_for('draft_board') }}"
->
-    Draft Board
-</a>
-
-
-<p class="menu-title">DRAFT</p>
-
-<a class="menu-item" href="#">
-    Trades
-</a>
-
-<a class="menu-item" href="#">
-    Results
-</a>
-
-
-<p class="menu-title">ADMIN</p>
-
-<a class="menu-item" href="#">
-    Settings
-</a>
-
+    <p class="menu-title">ADMIN</p>
+    <a class="menu-item" href="{{ url_for('welcome') }}">Setup</a>
   </aside>
 
   <main class="main">
-
     <div class="topbar">
-
       <div>
         <h1>Draft Dashboard</h1>
         <p>NFL Mock Draft Simulator</p>
       </div>
-
-      <div class="round-box">
-        Round <span id="roundNumber">1</span> of 10
-      </div>
-
+      <div class="round-box">Round <span id="roundNumber">{{ round_number }}</span> of 10</div>
     </div>
 
+    {% if revealed %}
+      <div class="dashboard-alert success">Player revealed: <strong>{{ revealed }}</strong></div>
+    {% endif %}
+    {% if error %}
+      <div class="dashboard-alert error">{{ error }}</div>
+    {% endif %}
 
     <section class="summary-grid">
-
       <div class="summary-card">
         <p>Current Team</p>
-        <h2 id="currentTeam">Team 1</h2>
+        <h2 id="currentTeam">{{ current_team.name if current_team else '—' }}</h2>
       </div>
-
       <div class="summary-card">
         <p>Current Pick</p>
-        <h2 id="currentPick">#1</h2>
+        <h2 id="currentPick">#{{ current_pick }}</h2>
       </div>
-
       <div class="summary-card">
         <p>Players Available</p>
-        <h2 id="availableCount">5</h2>
+        <h2 id="availableCount">{{ players|length }}</h2>
       </div>
-
       <div class="summary-card">
         <p>Team Budget</p>
-        <h2 class="green">$100M</h2>
+        <h2 class="green">{% if current_team %}${{ '%.0f'|format(current_team.budget) }}{% else %}—{% endif %}</h2>
       </div>
-
     </section>
 
-
     <section class="dashboard-grid">
-
       <div>
-
         <section class="panel">
-
           <div class="panel-header">
-
             <div>
               <h2>Available Players</h2>
               <p>Names remain hidden until selected.</p>
             </div>
-
           </div>
 
-
-          <table>
-
-            <thead>
-
-            <tr>
-              <th>ID</th>
-              <th>POS</th>
-              <th>Games</th>
-              <th>Yards</th>
-              <th>TD</th>
-              <th>Rating</th>
-              <th>Cost</th>
-            </tr>
-
-            </thead>
-
-
-            <tbody id="playerTable">
-
-            <tr data-id="101">
-              <td class="player-id">#101</td>
-              <td>QB</td>
-              <td>17</td>
-              <td>4,280</td>
-              <td>35</td>
-              <td>92</td>
-              <td>$15M</td>
-            </tr>
-
-            <tr data-id="102">
-              <td class="player-id">#102</td>
-              <td>QB</td>
-              <td>16</td>
-              <td>3,950</td>
-              <td>29</td>
-              <td>89</td>
-              <td>$13M</td>
-            </tr>
-
-            <tr data-id="103">
-              <td class="player-id">#103</td>
-              <td>WR</td>
-              <td>17</td>
-              <td>1,480</td>
-              <td>13</td>
-              <td>94</td>
-              <td>$14M</td>
-            </tr>
-
-            <tr data-id="104">
-              <td class="player-id">#104</td>
-              <td>RB</td>
-              <td>16</td>
-              <td>1,350</td>
-              <td>12</td>
-              <td>90</td>
-              <td>$12M</td>
-            </tr>
-
-            <tr data-id="105">
-              <td class="player-id">#105</td>
-              <td>TE</td>
-              <td>17</td>
-              <td>920</td>
-              <td>8</td>
-              <td>86</td>
-              <td>$9M</td>
-            </tr>
-
-            </tbody>
-
-          </table>
-
-
-          <div class="draft-form">
-
-            <label for="playerID"></label><input
-                  type="number"
-                  id="playerID"
-                  placeholder="Enter Player ID"
-          >
-
-            <button
-                    id="draftButton"
-                    class="primary-button"
-            >
-              Draft Player
-            </button>
-
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Stat 1</th>
+                  <th>Stat 2</th>
+                  <th>Stat 3</th>
+                  <th>Stat 4</th>
+                  <th>Cost</th>
+                </tr>
+              </thead>
+              <tbody id="playerTable">
+                {% for player in players %}
+                <tr>
+                  <td class="player-id">#{{ player.number }}</td>
+                  <td>{{ player.stat1|default('—') }}</td>
+                  <td>{{ player.stat2|default('—') }}</td>
+                  <td>{{ player.stat3|default('—') }}</td>
+                  <td>{{ player.stat4|default('—') }}</td>
+                  <td>${{ '%.0f'|format(player.price) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6">No players loaded.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
 
-
-          <p id="message"></p>
-
+          <form class="draft-form" action="{{ url_for('draft_pick') }}" method="POST">
+            <input type="number" id="playerID" name="player_num" placeholder="Enter Player ID" required>
+            <button id="draftButton" class="primary-button" type="submit">Draft Player</button>
+          </form>
         </section>
-
-
+<!--
+  Change this part to make a cleaner connection between the HTML and the script.js
+-->
         <section class="panel">
-
           <div class="panel-header">
-
             <h2>Draft Progress</h2>
-
             <span id="progressText">
-                            0 / 30 Picks
-                        </span>
-
+              {{ picks_done }} / {{ total_picks }} Picks
+            </span>
           </div>
-
           <div class="progress-background">
-
             <div
                     class="progress-bar"
                     id="progressBar"
-            ></div>
-
+                    data-picks-done="{{ picks_done }}"
+                    data-total-picks="{{ total_picks }}">
+            </div>
           </div>
-
         </section>
-
       </div>
-
 
       <div>
-
         <section class="current-pick-card">
-
           <small>CURRENTLY PICKING</small>
-
-          <h2 id="pickTeam">
-            Team 1
-          </h2>
-
-          <p id="pickInfo">
-            Round 1 • Pick #1
-          </p>
-
-          <div
-                  class="timer"
-                  id="timer"
-          >
-            01:30
-          </div>
-
+          <h2 id="pickTeam">{{ current_team.name if current_team else '—' }}</h2>
+          <p id="pickInfo">Round {{ round_number }} • Pick #{{ current_pick }}</p>
+          <div class="timer" id="timer">01:30</div>
         </section>
 
-
         <section class="panel">
-
-          <div class="panel-header">
-            <h2>Teams</h2>
-          </div>
-
-
-          <div class="team-card active">
-
+          <div class="panel-header"><h2>Teams</h2></div>
+          {% for team in teams %}
+          <div class="team-card {% if current_team == team %}active{% endif %}">
             <div class="team-title">
-              <strong>Team 1</strong>
-              <span class="budget">$100M</span>
+              <strong>{{ team.name }}</strong>
+              <span class="budget">${{ '%.0f'|format(team.budget) }}</span>
             </div>
-
-            <div
-                    class="roster"
-                    id="team1Roster"
-            >
-              No players drafted yet.
+            <div class="roster">
+              {% for player in team.roster %}
+                <div>{{ player.name }}</div>
+              {% else %}
+                No players drafted yet.
+              {% endfor %}
             </div>
-
           </div>
-
-
-          <div class="team-card">
-
-            <div class="team-title">
-              <strong>Team 2</strong>
-              <span class="budget">$100M</span>
-            </div>
-
-            <div
-                    class="roster"
-                    id="team2Roster"
-            >
-              No players drafted yet.
-            </div>
-
-          </div>
-
-
-          <div class="team-card">
-
-            <div class="team-title">
-              <strong>Team 3</strong>
-              <span class="budget">$100M</span>
-            </div>
-
-            <div
-                    class="roster"
-                    id="team3Roster"
-            >
-              No players drafted yet.
-            </div>
-
-          </div>
-
+          {% endfor %}
         </section>
 
-
         <section class="panel">
-
-          <div class="panel-header">
-            <h2>Draft Controls</h2>
-          </div>
-
-
+          <div class="panel-header"><h2>Draft Controls</h2></div>
           <div class="controls">
-
-            <button
-                    class="control-button"
-                    id="pauseButton"
-            >
-              Pause Timer
-            </button>
-
-            <button
-                    class="control-button"
-                    id="resetButton"
-            >
-              Reset Timer
-            </button>
-
-            <button class="control-button">
-              Undo Pick
-            </button>
-
-            <button class="control-button">
-              Manage Trade
-            </button>
-
-            <button class="control-button">
-              Next Pick
-            </button>
-
-            <button class="control-button end-button">
-              End Draft
-            </button>
-
+            <button class="control-button" id="pauseButton" type="button">Pause Timer</button>
+            <button class="control-button" id="resetButton" type="button">Reset Timer</button>
+            <form action="{{ url_for('undo') }}" method="POST">
+              <button class="control-button full-control" type="submit">Undo Pick</button>
+            </form>
+            <button class="control-button" type="button">Manage Trade</button>
+            <a class="control-button control-link" href="{{ url_for('draft_board') }}">View Draft Board</a>
+            <button class="control-button end-button" type="button">End Draft</button>
           </div>
-
         </section>
-
       </div>
-
     </section>
-
   </main>
-
 </div>
-
-
 <script src="{{ url_for('static', filename='script.js') }}"></script>
-
 </body>
 </html>
