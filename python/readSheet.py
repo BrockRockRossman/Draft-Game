@@ -1,42 +1,46 @@
-# Header: This is the code responsible for reading a 
-#csv file with a given set of data
 import csv
-# Imports
-from csv import *
+
 
 class readSheet:
-    # Variables
-    filePath = ""
-    data = []
-    dict_data = {}
 
-    # Class initialization
     def __init__(self, filePath):
         self.filePath = filePath
         self.data = []
+        self.dict_data = []
 
-    # Method to get the data into the list
-    def getData(self) :
+    def getData(self):
 
-        # Opens file
-        with open(self.filePath, newline='', encoding='utf-8') as csvfile:
+        # Clear old data every time the file is read
+        self.data = []
+        self.dict_data = []
 
-            #Creates a file reader
-            filereader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+        with open(
+            self.filePath,
+            newline="",
+            encoding="utf-8-sig"
+        ) as csvfile:
 
-            # Reads the file row by row adding it to the list
+            # CSV files are comma-separated by default
+            filereader = csv.reader(csvfile)
+
             for row in filereader:
 
-                rowData = list()
-                rowData.append(row)
-                self.data.append(rowData)
+                if row:
+                    self.data.append(row)
 
-            # Creates a dictionary version of the same reader
-            dictreader = csv.DictReader(csvfile, delimiter=' ', quotechar='|')
+        # Create dictionary version
+        if self.data:
 
-            # Reads the file row by row adding it to the list
-            for row in dictreader:
-                self.dict_data = row
+            headers = self.data[0]
+
+            for row in self.data[1:]:
+
+                self.dict_data.append(
+                    dict(zip(headers, row))
+                )
+
+        return self.data
+
 
 
 

@@ -1,4 +1,4 @@
-from teams import Team, Player
+from python.teams import Team, Player, BUDGET_CAP
 
 
 
@@ -30,6 +30,8 @@ class Draft:
         for p in self.available:  # p = each Player object still available
             if p.number == number:
                 player = p
+                break
+
         if player is None:
             raise ValueError("That player is already picked or doesn't exist")
 
