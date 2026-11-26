@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+  FLASK CONNECTION:
+  This page is rendered by app.py -> welcome().
+  Jinja variables received from Flask:
+    upload_success, upload_error, uploaded_filename
+  The CSV form posts to app.py -> upload_file().
+-->
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Draft Day | Welcome</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <link
+       href="https://fonts.googleapis.com/css2?family=Bungee&family=Rajdhani:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet"
+    >
+</head>
+
+
+<body class="setup-body">
+
+<div class="game-welcome">
+
+    <!-- Decorative background -->
+    <div
+        class="game-burst"
+        aria-hidden="true"
+    ></div>
+
+
+    <main class="setup-shell welcome-shell game-content">
+
+
+        <!-- HEADER -->
+
+        <header class="game-header">
+
+          <div class="setup-brand-mark">
+              <img
+                      src="{{ url_for('static', filename='brandLogo.png') }}"
+                      alt="Draft Day Logo"
+              >
+          </div>
+
+            <div>
+
+                <p class="setup-subtitle">
+                    NFL MOCK DRAFT SIMULATOR
+                </p>
+
+                <h1 class="welcome-brand">
+                    DRAFT DAY
+                </h1>
+
+            </div>
+
+        </header>
+
+
+        <!-- HERO -->
+
+        <section class="welcome-hero">
+
+            <div class="welcome-copy">
+
+                <h2>
+                    BUILD YOUR TEAM.
+                    <br>
+                    TRUST THE STATS.
+                </h2>
+
+                <p>
+                    Upload the player dataset, create your teams,
+                    and compete through a 10-round draft.
+                </p>
+
+            </div>
+
+            <div class="welcome-art" aria-hidden="true">
+                <img
+                        class="player-art player-run"
+                        src="{{ url_for('static', filename='player-run.png') }}"
+                        alt=""
+                >
+                <img
+                        class="player-art player-throw"
+                        src="{{ url_for('static', filename='player-throw.png') }}"
+                        alt=""
+                >
+            </div>
+
+        </section>
+
+        <!-- ACTION CARDS -->
+
+        <section class="setup-actions-grid">
+
+
+            <!-- CSV UPLOAD -->
+
+            <div class="setup-action-card game-action-card">
+
+                <div class="action-number">
+                    01
+                </div>
+
+                <h3>
+                    PLAYER DATA
+                </h3>
+
+                <p>
+                    Upload the CSV containing the player IDs,
+                    statistics, prices, and identities.
+                </p>
+
+
+                <!-- KEEP THIS FORM ACTION -->
+                <form
+                    action="{{ url_for('upload_file') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    class="upload-form"
+                >
+
+                    <label
+                        class="gradient-file-button"
+                        for="player_data"
+                    >
+
+                        <span id="fileLabel">
+                            CHOOSE CSV
+                        </span>
+
+                        <!-- KEEP ID AND NAME -->
+                        <input
+                            id="player_data"
+                            name="player_data"
+                            type="file"
+                            accept=".csv"
+                            required
+                        >
+
+                    </label>
+
+
+                    <button
+                        class="setup-gradient-button"
+                        type="submit"
+                    >
+                        UPLOAD DATA
+                    </button>
+
+                </form>
+
+
+                <!-- FLASK SUCCESS MESSAGE -->
+
+                {% if upload_success %}
+
+                    <div class="setup-message success">
+
+                        ✓ {{ uploaded_filename }}
+                        uploaded successfully.
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- FLASK ERROR MESSAGE -->
+
+                {% if upload_error %}
+
+                    <div class="setup-message error">
+
+                        {{ upload_error }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- CREATE TEAMS -->
+
+            <div class="setup-action-card game-action-card">
+
+                <div class="action-number">
+                    02
+                </div>
+
+                <h3>
+                    CREATE TEAMS
+                </h3>
+
+                <p>
+                    Create between 3 and 5 teams and assign
+                    each team its starting budget.
+                </p>
+
+
+                <!-- KEEP THIS URL_FOR -->
+                <a
+                    class="setup-gradient-link"
+                    href="{{ url_for('create_teams_page') }}"
+                >
+                    CREATE TEAMS
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- HOW TO PLAY -->
+
+        <section class="how-to-play">
+
+            <div class="section-heading">
+
+                <p>
+                    GAME GUIDE
+                </p>
+
+                <h2>
+                    HOW TO PLAY
+                </h2>
+
+            </div>
+
+
+            <div class="rules-grid">
+
+
+                <div class="rule-card">
+
+                    <strong>
+                        01
+                    </strong>
+
+                    <h4>
+                        Upload
+                    </h4>
+
+                    <p>
+                        Upload your NFL player CSV dataset.
+                    </p>
+
+                </div>
+
+
+                <div class="rule-card">
+
+                    <strong>
+                        02
+                    </strong>
+
+                    <h4>
+                        Build
+                    </h4>
+
+                    <p>
+                        Create between 3 and 5 teams.
+                    </p>
+
+                </div>
+
+
+                <div class="rule-card">
+
+                    <strong>
+                        03
+                    </strong>
+
+                    <h4>
+                        Draft
+                    </h4>
+
+                    <p>
+                        Pick players using anonymous IDs
+                        and statistics.
+                    </p>
+
+                </div>
+
+
+                <div class="rule-card">
+
+                    <strong>
+                        04
+                    </strong>
+
+                    <h4>
+                        Reveal
+                    </h4>
+
+                    <p>
+                        Discover the player's identity
+                        after the pick is submitted.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
